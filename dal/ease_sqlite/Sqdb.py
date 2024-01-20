@@ -393,6 +393,7 @@ class DataBase:
             sql += f" \nORDER BY {ORDERBY_SQL}"
         sql += ';'
         cursor = self._conn.cursor()
+        print('sql ',sql)
         rows = cursor.execute(sql)
         return list(rows)
 

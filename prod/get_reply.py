@@ -1,19 +1,26 @@
 import datetime
 import time
-from bilibili_api import session
+from bilibili_api import session,video,user
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 from dal import user_dal
+from service.max_seq_no import get,create,update
 
 from service import gpt, video_content
 
+from service.note import Note
+from utils.messag import cut_message
 class GetReply:
     def __init__(self, credential) -> None:
         super().__init__()
         # 会话状态
         self.__status = 0
 
+        
+        if get() is None:
+            print("create 1")
+            create(1)
+        print("get ",get())
         # 会话UID为键 会话中最大Seqno为值
         self.maxSeqno = [456401906614284]
 
@@ -53,7 +60,7 @@ class GetReply:
 
                     if idx == 0:
                         self.maxSeqno.insert(0, res["items"][0]["id"])
-
+                    
                     # 85902173 Sherlockouo
                     user_id = item["user"]["mid"]
                     if not user_dal.query_by_user_id(user_id):
@@ -62,12 +69,12 @@ class GetReply:
 
                     video_url = item["item"]["uri"]
 
-                    def callback_warpper():
-                        user, content = item["user"]["nickname"], item["item"]["source_content"]
-                        async def callback(response):
-                            print(user, content, "总结内容:")
-                            print(response)
-                        return callback
+                    # def callback_warpper():
+                    #     user, content = item["user"]["nickname"], item["item"]["source_content"]
+                    #     async def callback(response):
+                    #         print(user, content, "总结内容:")
+                    #         print(response)
+                    #     return callback
 
                     raw_transcript, _ = await video_content.load_video(self.credential, video_url)
                     await gpt.summaries(raw_transcript, callback_warpper())
@@ -80,6 +87,7 @@ class GetReply:
 
             if len(self.maxSeqno) >= 2:
                 self.maxSeqno = self.maxSeqno[-2:-1]
+                
 
         self.sched.start()
 

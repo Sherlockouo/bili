@@ -2,7 +2,7 @@ from bilibili_api import Credential, sync,user
 from bilibili_api.session import Session, Event
 from bilibili_api.utils.picture import Picture
 from credential import credential
-from service.gpt import chat
+# from service.gpt import chat
 from utils.logger import logger
 from dal import user_dal
 from service.user import is_follow
@@ -10,6 +10,7 @@ from service.user import is_follow
 import asyncio
 
 session = Session(credential)
+from credential import session
 
 class Chat:   
 	def __init__(self) -> None:
@@ -95,7 +96,7 @@ class Chat:
 					current += sentense_list[curr_idx]
 					curr_idx += 1
 			
-			await chat(event.content, callback)
+			# await chat(event.content, callback)
 		else:
 			await session.reply(event, "你好呀,请问需要什么帮助")
 
