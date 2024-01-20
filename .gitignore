@@ -1,0 +1,9 @@
+.venv
+__pycache__/
+test*
+tmp*
+.env
+.DS_Store
+db.sqlite
+./**/__pycache__
+.credential
