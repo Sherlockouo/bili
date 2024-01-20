@@ -6,6 +6,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from dal import user_dal
 
+
+
 class GetReply:
     def __init__(self, credential) -> None:
         super().__init__()
@@ -60,6 +62,11 @@ class GetReply:
                     #     continue
                     print(item["item"])
                     print(item["user"]["nickname"], ":", item["item"]["source_content"], "ref:", item["item"]["uri"])
+
+                    video_url = item["item"]["uri"]
+
+                    # asyncio.run_coroutine_threadsafe()
+                    print(item)
 
                 if res['cursor']['is_end']:
                     break
