@@ -6,7 +6,7 @@ credential = Credential()
 
 # Check if credential file exists
 credential_file = './.credential'
-if not os.path.exists(credential_file) and os.path.getsize(credential) == 0 :
+if not os.path.exists(credential_file) or os.path.getsize(credential_file) == 0 :
     # If credential file does not exist, login via QR Code
     try:
         credential = login.login_with_qrcode_term()

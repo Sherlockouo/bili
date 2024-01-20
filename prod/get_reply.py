@@ -6,7 +6,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from dal import user_dal
 
-
+from service import gpt, video_content
 
 class GetReply:
     def __init__(self, credential) -> None:
@@ -15,7 +15,7 @@ class GetReply:
         self.__status = 0
 
         # 会话UID为键 会话中最大Seqno为值
-        self.maxSeqno = []
+        self.maxSeqno = [456401906614284]
 
         # 凭证
         self.credential = credential
@@ -41,7 +41,6 @@ class GetReply:
             next_run_time=datetime.datetime.now(),
         )
         async def _():
-            print("start fetch")
             last_uid = None
             last_time = int(time.time())
             while True:
@@ -56,17 +55,22 @@ class GetReply:
                         self.maxSeqno.insert(0, res["items"][0]["id"])
 
                     # 85902173 Sherlockouo
-                    # user_id = item["user"]["mid"]
-                    # if not user_dal.query_by_user_id(user_id):
-                    #     print(item["user"]["nickname"], ":", "has no auth")
-                    #     continue
-                    print(item["item"])
-                    print(item["user"]["nickname"], ":", item["item"]["source_content"], "ref:", item["item"]["uri"])
+                    user_id = item["user"]["mid"]
+                    if not user_dal.query_by_user_id(user_id):
+                        print(item["user"]["nickname"], ":", "has no auth")
+                        continue
 
                     video_url = item["item"]["uri"]
 
-                    # asyncio.run_coroutine_threadsafe()
-                    print(item)
+                    def callback_warpper():
+                        user, content = item["user"]["nickname"], item["item"]["source_content"]
+                        async def callback(response):
+                            print(user, content, "总结内容:")
+                            print(response)
+                        return callback
+
+                    raw_transcript, video_info = await video_content.load_video(self.credential, video_url)
+                    await gpt.summaries(raw_transcript, video_info, callback_warpper())
 
                 if res['cursor']['is_end']:
                     break
@@ -77,7 +81,6 @@ class GetReply:
             if len(self.maxSeqno) >= 2:
                 self.maxSeqno = self.maxSeqno[-2:-1]
 
-            print(self.maxSeqno)
         self.sched.start()
 
     async def start(self) -> None:

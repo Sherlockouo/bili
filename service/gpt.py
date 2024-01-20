@@ -16,7 +16,7 @@ model = AutoModel.from_pretrained(model_dir, trust_remote_code=True).half().cuda
 model = model.eval()
 
 
-async def chat(text):
+async def chat(text, callback):
     history = [ # todo @wudingfeng @xubingchao 完善 chat 上下文
         {
             'role': 'system',
@@ -27,15 +27,19 @@ async def chat(text):
     global loop_name
     loop = thread_loop.registe_or_get_loop(loop_name)
 
-    async def chat_(text, history):
-        response, history = model.chat(tokenizer, text, history=history)
-        return response, history
+
+    async def chat_(text_, history_):
+        response, history_res = model.chat(tokenizer, text_, history=history_)
+        return response, history_res
+    
+    def callback_(done_feature):
+        asyncio.run_coroutine_threadsafe(callback(done_feature.result()), loop=loop)
     
     # 响应
-    response, _ = await asyncio.run_coroutine_threadsafe(chat_(text, history), loop=loop)
-    return response
+    feature = asyncio.run_coroutine_threadsafe(chat_(text, history), loop=loop)
+    feature.add_done_callback(callback_)
 
-async def summaries(video_transcript, video_info):
+async def summaries(video_transcript, video_info, callback):
     summary_history = [
         {
             'role': 'system',
@@ -50,6 +54,10 @@ async def summaries(video_transcript, video_info):
         response, _ = model.chat(tokenizer, text, history=summary_history)
         return response
     
+    def callback_(done_feature):
+        asyncio.run_coroutine_threadsafe(callback(done_feature.result()), loop=loop)
+    
     # 响应
-    response = await asyncio.run_coroutine_threadsafe(summaries_(video_transcript), loop=loop)
-    return response
+    feature = asyncio.run_coroutine_threadsafe(summaries_(video_transcript), loop=loop)
+    feature.add_done_callback(callback_)
+    
