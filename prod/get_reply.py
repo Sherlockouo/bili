@@ -69,8 +69,8 @@ class GetReply:
                             print(response)
                         return callback
 
-                    raw_transcript, video_info = await video_content.load_video(self.credential, video_url)
-                    await gpt.summaries(raw_transcript, video_info, callback_warpper())
+                    raw_transcript, _ = await video_content.load_video(self.credential, video_url)
+                    await gpt.summaries(raw_transcript, callback_warpper())
 
                 if res['cursor']['is_end']:
                     break

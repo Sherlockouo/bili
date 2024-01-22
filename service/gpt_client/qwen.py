@@ -59,8 +59,7 @@ class QWenClient(Client):
             }
         ]
                 
-        global loop_name
-        loop = thread_loop.register_or_get_loop(loop_name)
+        loop = thread_loop.register_or_get_loop(self.loop_name)
 
         async def summaries_(text):
             summary_history.append({"content":text, "role":"user"})
