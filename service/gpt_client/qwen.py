@@ -6,6 +6,9 @@ import asyncio
 class QWenClient(Client):
     def __init__(self, URL) -> None:
         super().__init__()
+        self.loop_name = "qianwen_thred_loop"
+
+        thread_loop.register_or_get_loop(self.loop_name)
         self.URL = URL
 
     def post_request(self, messages):
@@ -39,7 +42,7 @@ class QWenClient(Client):
             history_.append({"content":text_, "role":"user"})
             resp = self.post_request(history_)
             history_.append(resp)
-            return resp, history_
+            return resp["content"], history_
 
         def callback_(done_feature):
             asyncio.run_coroutine_threadsafe(callback(done_feature.result()), loop=loop)
@@ -62,7 +65,7 @@ class QWenClient(Client):
         async def summaries_(text):
             summary_history.append({"content":text, "role":"user"})
             resp = self.post_request(summary_history)
-            return resp
+            return resp["content"]
         
         def callback_(done_feature):
             asyncio.run_coroutine_threadsafe(callback(done_feature.result()), loop=loop)
