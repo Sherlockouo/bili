@@ -42,3 +42,4 @@ tzlocal==5.2
 urllib3==2.1.0
 yarl==1.9.4
 openai
+await_requests

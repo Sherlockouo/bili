@@ -9,7 +9,7 @@ def start_loop(thread_loop: asyncio.AbstractEventLoop):
     asyncio.set_event_loop(thread_loop)
     thread_loop.run_forever()
 
-def registe_or_get_loop(loop_name) -> asyncio.AbstractEventLoop:
+def register_or_get_loop(loop_name) -> asyncio.AbstractEventLoop:
     if stop:
         return None
     

@@ -2,8 +2,6 @@ import asyncio, re
 import async_requests
 from bilibili_api import video
 
-from langchain.document_loaders.bilibili import BiliBiliLoader
-
 async def load_video(credential, url) -> None:
     bvid = re.search(r"BV\w+", url)
     # 实例化 Video 类

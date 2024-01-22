@@ -1,3 +1,4 @@
+import config
 import prod
 from utils import thread_loop
 import asyncio, time
@@ -5,7 +6,7 @@ from credential import credential
 
 loop_name = "main_thread_loop"
 
-thread_loop.registe_or_get_loop(loop_name)
+thread_loop.register_or_get_loop(loop_name)
 
 # 调用实例方法
 async def launch():
@@ -13,7 +14,7 @@ async def launch():
 
 
 def main():
-   asyncio.run_coroutine_threadsafe(launch(), thread_loop.registe_or_get_loop(loop_name),)
+   asyncio.run_coroutine_threadsafe(launch(), thread_loop.register_or_get_loop(loop_name),)
    
    try:
       while True:
