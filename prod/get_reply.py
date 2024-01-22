@@ -69,12 +69,12 @@ class GetReply:
 
                     video_url = item["item"]["uri"]
 
-                    # def callback_warpper():
-                    #     user, content = item["user"]["nickname"], item["item"]["source_content"]
-                    #     async def callback(response):
-                    #         print(user, content, "总结内容:")
-                    #         print(response)
-                    #     return callback
+                    def callback_warpper():
+                        user, content = item["user"]["nickname"], item["item"]["source_content"]
+                        async def callback(response):
+                            print(user, content, "总结内容:")
+                            print(response)
+                        return callback
 
                     raw_transcript, _ = await video_content.load_video(self.credential, video_url)
                     await gpt.summaries(raw_transcript, callback_warpper())
